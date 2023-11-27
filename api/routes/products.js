@@ -7,9 +7,12 @@ const dbName = "personalTrainer";
 const username = "erogluduygu";
 const password = "aLT7BnJe5ubB7fqo";
 
-err = mongoose.connect(`mongodb+srv://${username}:${password}@cluster0.xwgcemn.mongodb.net/${dbName}?retryWrites=true&w=majority`);
-console.log(err);
+const connect_to_db = async () => {
+    err = await mongoose.connect(`mongodb+srv://${username}:${password}@cluster0.xwgcemn.mongodb.net/${dbName}?retryWrites=true&w=majority`);
+    console.log(err);   
+}
 
+connect_to_db()
 
 router.get('/', (req,res,next)=> {
     //res.status(200).json({message: 'Products ekranında GET requesti çalıştı.'});
