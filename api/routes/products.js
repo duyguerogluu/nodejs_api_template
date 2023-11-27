@@ -3,8 +3,6 @@ const mongoose = require('mongoose');
 require("dotenv/config");
 const router = express.Router();
 
-
-
 const connect_to_db = async () => {
     err = await mongoose.connect(`mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0.xwgcemn.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`);
     console.log(err);   
