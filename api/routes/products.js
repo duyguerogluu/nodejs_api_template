@@ -14,7 +14,7 @@ connect_to_db()
 
 router.get('/', (req,res,next)=> {
     //res.status(200).json({message: 'Products ekranında GET requesti çalıştı.'});
-    res.send("products");
+    res.send("fetch products list");
 });
 
 router.post('/', (req,res,next)=> {
