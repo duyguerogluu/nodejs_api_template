@@ -31,15 +31,19 @@ const connect_to_db = async () => {
 connect_to_db()
 
 
-router.get('/', (req,res,next)=> {
-    //res.status(200).json({message: 'Products ekranında GET requesti çalıştı.'});
-    res.send("fetch products list");
+router.get('/', async (req, res, next) => {
+    try {
+        const productList = await Product.find().limit(10);
+        res.json(productList);
+    } catch (e) {
+        res.json(e);
+    }
 });
 
-router.post('/', (req,res,next)=> {
+router.post('/', (req, res, next) => {
     //console.log(req.body, "body");
     const product = new Product({
-        name: req.body.product,
+        name: req.body.name,
         price: req.body.price,
         description: req.body.description,
     });
@@ -49,48 +53,39 @@ router.post('/', (req,res,next)=> {
 });
 
 
-router.get('/:productId', (req, res, next)=> {
-   
-    res.send(`fetch product ${req.params.productId}`);
+router.get('/:productId', async (req, res, next) => {
+    try {
+        const id = req.params.productId;
+        const product = await Product.findById(id);
+        res.json(product);
+    } catch (e) {
+        res.json(e);
+    }
+});
 
-    const id = req.params.productId;
 
-    if(id === 'duygu'){
-        res.status(200).json({
-            message: 'Hoşgeldin', 
-            id: id,
+router.put('/:productId', (req, res, next) => {
+
+    try{
+        const updateProduct = Product.findByIdAndUpdate(req.params.productId, {
+            name: req.body.name,
+            price: req.body.price,
+            description: req.body.description,
         });
-    }
-    else{
-        res.status(200).json({})
+        res.json(updateProduct);
+    }catch(e){
+        res.json(e);
     }
 });
 
 
-router.put('/:productId', (req, res, next)=> {
-    res.send(`update product ${req.params.productId}`);
-});
-
-
-router.delete('/:productId', (req,res,next)=>{
-    res.send(`delete product ${req.params.productId}`);
-});
-
-
-const products = [
-    {
-        id: 1,
-        title:"Product 1",
-        prices: 100,
-        description: "Product1 description",
+router.delete('/:productId', (req, res, next) => {
+    try{
+       const deleteProduct = Product.findByIdAndDelete(req.params.productId);
+       res.json(deleteProduct);
+    }catch(e){
+        res.json(e);
     }
-];
-
-//fetch products //get
-//get product //:id //get
-//create product //post
-//update product //:id //put
-//delete product //:id //delete
-
+});
 
 module.exports = router;
