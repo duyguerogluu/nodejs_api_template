@@ -14,18 +14,33 @@
  *  You should have received a copy of the GNU General Public License
  *   along with nodejs_api_template.  If not, see <https://www.gnu.org/licenses/>.
  */
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
-const express = require('express');
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const app = express();
+const mongoose = require('mongoose');
 
-const productsRoutes = require('./api/routes/products');
+const UserShcema = new mongoose.Schema({
+    username: {type:String, required:true, unique:true},
+    password: {type: String, required: true, unique:true},
+    createdat: {
+        type: Date,
+        default: Date.now,
+    },
+    updatedat: {
+        type: Date,
+        default: Date.now,
+    }
+});
+UserShcema.pre("save", function(next){
+      const user = this;
+      console.log("USER PASS 1",user.password);
+      bcrypt.hash(user.password, 10, (err, data) => {
+        user.password = hash;
+        console.log("USER PASS 2",user.password);
+        next();
+      })
+});
 
-app.use(bodyParser.json());
 
-app.use(cors());
 
-app.use('/products', productsRoutes);
-
-module.exports = app;
+ module.exports = mongoose.model("User", UserShcema);
