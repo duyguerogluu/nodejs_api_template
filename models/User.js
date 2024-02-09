@@ -19,18 +19,47 @@ import bcrypt from 'bcrypt';
 
 const mongoose = require('mongoose');
 
-const UserShcema = new mongoose.Schema({
-    username: {type:String, required:true, unique:true},
-    password: {type: String, required: true, unique:true},
-    createdat: {
-        type: Date,
-        default: Date.now,
-    },
-    updatedat: {
-        type: Date,
-        default: Date.now,
-    }
+const PhoneSchema = mongoose.Schema({
+    phone: { type: Number, required: true },
+    country_code: { type: Number, required: true },
+    verified: { type: Date, default: Date.now() },
+}, {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    _id: false,
+    id: false,
 });
+
+const EMailSchema = mongoose.Schema({
+    email: { type: String, required: true },
+    verified: { type: Date, default: Date.now() },
+}, {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    _id: false,
+    id: false,
+});
+
+const UserSchema = mongoose.Schema({
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    created: { type: Date, default: Date.now() },
+    updated: { type: Date, default: Date.now() },
+    adverts: [ { type: mongoose.Types.ObjectId, ref: 'Advert' } ],
+    phone: { type: PhoneSchema },
+    email: { type: EMailSchema },
+}, { collection: 'User', usePushEach: true });
+
+UserSchema.statics = {
+    async getUserById(id) {
+        return this.findOne({ _id: id })
+            .populate([
+                {
+                    path: 'adverts'
+                }
+            ]);
+    },
+}
 UserShcema.pre("save", function(next){
       const user = this;
       console.log("USER PASS 1",user.password);
