@@ -15,19 +15,13 @@
  *   along with nodejs_api_template.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const express = require('express');
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const app = express();
+import mongoose from 'mongoose';
 
-const productsRoutes = require('./api/routes/products');
-const authRoutes = require('./api/routes/auth');
+const mongoose = require('mongoose');
 
-app.use(bodyParser.json());
 
-app.use(cors());
+const PhotoSchema = mongoose.Schema({
+    imagePath: { type: String, required: true },
+}, { collection: 'User', usePushEach: true });
 
-app.use('/', authRoutes);
-app.use('/products', productsRoutes);
-
-module.exports = app;
+module.exports = mongoose.model("Photo", PhotoSchema);

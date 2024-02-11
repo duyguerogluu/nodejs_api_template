@@ -40,6 +40,7 @@ const EMailSchema = mongoose.Schema({
     id: false,
 });
 
+
 const UserSchema = mongoose.Schema({
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },

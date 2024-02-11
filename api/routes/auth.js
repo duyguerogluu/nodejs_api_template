@@ -1,4 +1,11 @@
 const TokenSchema = require('../../models/Token');
+const router = require('express').Router();
+
+router.get('/login', (req, res, next) => {})
+router.post('/login', (req, res, next) => {})
+router.get('/signup', (req, res, next) => {})
+router.post('/signup', (req, res, next) => {})
+router.get('/logout', (req, res, next) => {})
 
 const AuthUtils = (() => {
     const checkJWT = async (req, res, next) => {
