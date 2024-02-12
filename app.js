@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 
 app.use(cors());
 
-app.use('/', authRoutes);
+app.use('/  ', authRoutes);
 app.use('/products', productsRoutes);
 
 module.exports = app;

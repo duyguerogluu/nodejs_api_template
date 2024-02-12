@@ -30,9 +30,7 @@ const connect_to_db = async () => {
 connect_to_db()
 
 
-router.post('/login', (req, res, next) => {
-    const body = { user_name, password,  }
-});
+
 
 router.post('/logout', AuthUtils.checkJWT, (req, res, next) => {
 

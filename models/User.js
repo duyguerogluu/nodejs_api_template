@@ -42,6 +42,7 @@ const EMailSchema = mongoose.Schema({
 
 
 const UserSchema = mongoose.Schema({
+    username: { type: String, required: true },
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
     created: { type: Date, default: Date.now() },
