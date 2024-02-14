@@ -1,48 +1,68 @@
 const TokenSchema = require('../../models/Token');
 const router = require('express').Router();
 const User = require('../../models/User');
-import bcrypt from 'bcrypt';
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 router.post('/login', async (req, res, next) => {
-    try{
+    try {
 
-    const user = await User.findOne({username: req.body.username});
+        const user = await User.findOne({ username: req.body.username });
 
-    console.log("req.body", req.body);
+        console.log("req.body", req.body);
 
-    let same = false
+        let same = false
 
-    if(user){
-        same = await bcrypt.compare(req.body.password, user.password);
-        console.log("same", same);
-    }else {
-        res.status(401).json({
-            succeded: false,
-            error: "There is no such user.",
-        });
-    } 
-    
-    if(same){
-        res.status(200).send("You are logged in ");
-        console.log("same", same);
-    }else {
-        res.status(401).json({
-            succeded: false,
-            error: "Password are not macthed.",
-        });
-    } 
+        if (user) {
+            same = await bcrypt.compare(req.body.password, user.password);
+            console.log("same", same);
+        } else {
+            res.status(401).json({
+                succeded: false,
+                error: "There is no such user.",
+            });
+        }
 
-}catch(error){
+        if (same) {
+
+           const token = createToken(user._id)
+           res.cookie("jwt", token, {
+            httpOnly: true,
+            maxAge:1000*60*60*24,
+           });
+
+           res.redirect('/users/dashboard');
+            // res.status(200).json({
+            //     user,
+            //     token: createToken(user._id)
+            // });
+            console.log("same", same);
+        } else {
+            res.status(401).json({
+                succeded: false,
+                error: "Password are not macthed.",
+            });
+        }
+
+    } catch (error) {
         res.status(500).json({
             succeded: false,
             error,
         })
-    }});
+    }
+});
 
 
-router.get('/signup', (req, res, next) => {})
-router.post('/signup', (req, res, next) => {})
-router.get('/logout', (req, res, next) => {})
+router.get('/signup', (req, res, next) => { })
+router.post('/signup', (req, res, next) => { })
+router.get('/logout', (req, res, next) => { })
+
+
+const createToken = (userId)=>{
+    return jwt.sign({userId}, process.env.JWT_SECRET,{
+        expiresIn: 'Id',
+    }) 
+}
 
 const AuthUtils = (() => {
     const checkJWT = async (req, res, next) => {

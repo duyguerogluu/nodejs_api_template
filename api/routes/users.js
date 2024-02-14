@@ -20,6 +20,7 @@ const mongoose = require('mongoose');
 require("dotenv/config");
 const User = require('../../models/User');
 const router = express.Router();
+const autmiddleware = require('../middleware/autmiddleware');
 
 
 const connect_to_db = async () => {
@@ -28,6 +29,13 @@ const connect_to_db = async () => {
 }
 
 connect_to_db()
+
+
+router.get('/dashboard ',autmiddleware.authenticateToken, (req, res, next) => {
+    res.render('dashboard',{
+        link:'dashboard',
+    });
+});
 
 
 
