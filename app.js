@@ -31,7 +31,7 @@ app.use(cookieParser());
 
 app.use(cors());
 
-app.use('/  ', authRoutes);
+app.use('/', authRoutes);
 app.use('/products', productsRoutes);
 
 

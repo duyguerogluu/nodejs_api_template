@@ -1,12 +1,11 @@
-const TokenSchema = require('../../models/Token');
 const router = require('express').Router();
 const User = require('../../models/User');
+const Token = require('../../models/Token');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req, res) => {
     try {
-
         const user = await User.findOne({ username: req.body.username });
 
         console.log("req.body", req.body);
@@ -14,80 +13,116 @@ router.post('/login', async (req, res, next) => {
         let same = false
 
         if (user) {
-            same = await bcrypt.compare(req.body.password, user.password);
+            console.log(req.body.password, user.password);
+            same = req.body.password === user.password; // await bcrypt.compare(req.body.password, user.password);
             console.log("same", same);
         } else {
-            res.status(401).json({
+            return res.status(401).json({
                 succeded: false,
                 error: "There is no such user.",
             });
         }
 
         if (same) {
-
            const token = createToken(user._id)
+            const maxAge = 1000 * 60 * 60 * 24
+            const validTime = Date.now() + maxAge
+
            res.cookie("jwt", token, {
             httpOnly: true,
-            maxAge:1000*60*60*24,
+               maxAge: maxAge,
            });
 
-           res.redirect('/users/dashboard');
-            // res.status(200).json({
-            //     user,
-            //     token: createToken(user._id)
-            // });
+            const newTokenObj = Token();
+            newTokenObj.username = req.body.username;
+            newTokenObj.token = token;
+            newTokenObj.valid_time = validTime;
+            await newTokenObj.save();
+
             console.log("same", same);
+
+            return res.status(200).json({
+                succeded: true,
+                message: 'Logged in successfully!',
+                token,
+                validTime,
+            })
         } else {
-            res.status(401).json({
+            return res.status(401).json({
                 succeded: false,
                 error: "Password are not macthed.",
             });
         }
 
+
     } catch (error) {
-        res.status(500).json({
+        console.log(error)
+        return res.status(500).json({
             succeded: false,
             error,
         })
     }
 });
 
+router.post('/signup', async (req, res) => {
+    const { username, password, first_name, last_name, phone, email } = req.body;
 
-router.get('/signup', (req, res, next) => { })
-router.post('/signup', (req, res, next) => { })
-router.get('/logout', (req, res, next) => { })
+    console.log("req.body", req.body);
 
-
-const createToken = (userId)=>{
-    return jwt.sign({userId}, process.env.JWT_SECRET,{
-        expiresIn: 'Id',
-    }) 
-}
-
-const AuthUtils = (() => {
-    const checkJWT = async (req, res, next) => {
-        const bearerHeader = req.headers['authorization'];
-        const uidHeader = req.headers['x-uid'];
-
-        if (bearerHeader.indexOf('Bearer') === 0) {
-            const split = bearerHeader.split(' ');
-            if (split.length === 2) {
-                const token = split[1].trim();
-                const validated_token = await TokenSchema.getValidatedToken(uidHeader, token);
-
-                if (validated_token) {
-                    req.token = validated_token;
-                    return next();
-                }
-            }
-        }
-
-        return res.status(401).json({ error: 'Unauthorized' });
+    if (!checkValueIsValid(username) || !checkValueIsValid(password) || !checkValueIsValid(first_name) ||
+        !checkValueIsValid(phone) || !checkValueIsValid(email)) {
+        return res.status(403).json({
+            succeded: false,
+            error: 'A required field is not provided properly',
+        })
     }
 
-    return {
-        checkJWT,
-    };
-})();
+    try {
+        const user = await User.findOne({ username: username });
+        const phoneUser = await User.findOne({ 'phone.phone': phone });
+        const emailUser = await User.findOne({ 'email.email': email });
 
-module.exports = AuthUtils;
+        if (user || phoneUser || emailUser) {
+            return res.status(401).json({
+                succeded: false,
+                error: 'Username/phone/email exists',
+            });
+        }
+
+        const newUser = User();
+        newUser.username = username;
+        newUser.password = password;
+        newUser.first_name = first_name;
+        newUser.last_name = last_name;
+        newUser.phone = { phone: phone, verified: Date.now() };
+        newUser.email = { email: email, verified: Date.now() };
+        const savedUser = await newUser.save();
+        savedUser.password = undefined;
+
+        return res.status(200).json({
+            succeded: true,
+            message: 'User created successfully',
+            user: savedUser,
+        });
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            succeded: false,
+            error,
+        })
+    }
+});
+
+router.post('/logout', async (req, res) => {
+
+});
+
+const checkValueIsValid = (value) => value && value.length > 0
+
+const createToken = (userId) => {
+    return jwt.sign({ userId }, process.env.JWT_SECRET, {
+        expiresIn: '1d',
+    })
+}
+
+module.exports = router;
