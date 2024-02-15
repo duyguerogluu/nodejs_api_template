@@ -14,14 +14,12 @@
  *  You should have received a copy of the GNU General Public License
  *   along with nodejs_api_template.  If not, see <https://www.gnu.org/licenses/>.
  */
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
+const bcrypt = require('bcrypt');
 
 const mongoose = require('mongoose');
 
 const PhoneSchema = mongoose.Schema({
-    phone: { type: Number, required: true },
-    country_code: { type: Number, required: true },
+    phone: { type: String, required: true },
     verified: { type: Date, default: Date.now() },
 }, {
     toObject: { virtuals: true },
@@ -44,7 +42,8 @@ const EMailSchema = mongoose.Schema({
 const UserSchema = mongoose.Schema({
     username: { type: String, required: true },
     first_name: { type: String, required: true },
-    last_name: { type: String, required: true },
+    last_name: { type: String, default: '' },
+    password: { type: String, required: true },
     created: { type: Date, default: Date.now() },
     updated: { type: Date, default: Date.now() },
     adverts: [ { type: mongoose.Types.ObjectId, ref: 'Advert' } ],
@@ -62,16 +61,12 @@ UserSchema.statics = {
             ]);
     },
 }
-UserShcema.pre("save", function(next){
-      const user = this;
-      console.log("USER PASS 1",user.password);
-      bcrypt.hash(user.password, 10, (err, data) => {
-        user.password = hash;
-        console.log("USER PASS 2",user.password);
-        next();
-      })
+UserSchema.pre("save", function (next) {
+    const user = this;
+    user.password = bcrypt.hashSync(user.password, 10);
+    console.log(user.password);
+    next();
 });
 
 
-
- module.exports = mongoose.model("User", UserShcema);
+module.exports = mongoose.model("User", UserSchema);

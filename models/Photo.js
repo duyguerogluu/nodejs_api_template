@@ -21,7 +21,14 @@ const mongoose = require('mongoose');
 
 
 const PhotoSchema = mongoose.Schema({
-    imagePath: { type: String, required: true },
-}, { collection: 'User', usePushEach: true });
+    path: { type: String, required: true },
+    type: {
+        type: String,
+        enum: ['advert', 'profile', 'other'],
+        default: 'other',
+    },
+    user: { type: mongoose.Types.ObjectId, ref: 'User' },
+    created: { type: Date, default: Date.now() },
+}, { collection: 'Photo', usePushEach: true });
 
 module.exports = mongoose.model("Photo", PhotoSchema);
