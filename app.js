@@ -21,6 +21,8 @@ const cors = require("cors");
 const app = express();
 
 const productsRoutes = require('./api/routes/products');
+const ordersRoutes = require('./api/routes/order');
+const userRoutes = require('./api/routes/users');
 const authRoutes = require('./api/routes/auth');
 const cookieParser = require('cookie-parser');
 
@@ -33,6 +35,8 @@ app.use(cors());
 
 app.use('/', authRoutes);
 app.use('/products', productsRoutes);
+app.use('/orders', ordersRoutes);
+app.use('/users', userRoutes);
 
 
 module.exports = app;

@@ -47,8 +47,18 @@ const UserSchema = mongoose.Schema({
     created: { type: Date, default: Date.now() },
     updated: { type: Date, default: Date.now() },
     adverts: [ { type: mongoose.Types.ObjectId, ref: 'Advert' } ],
+    orders: [ { type: mongoose.Types.ObjectId, ref: 'Order' } ],
     phone: { type: PhoneSchema },
     email: { type: EMailSchema },
+    location: {
+        region: { type: String, required: true },
+        city: { type: String, required: true },
+        country: { type: String, default: 'TR' },
+        geo: {
+            lat: { type: Number, required: true },
+            lon: { type: Number, required: true },
+        },
+    },
 }, { collection: 'User', usePushEach: true });
 
 UserSchema.statics = {

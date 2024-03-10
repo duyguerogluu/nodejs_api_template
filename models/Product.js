@@ -18,13 +18,19 @@
 const mongoose = require('mongoose');
 
 const ProductShcema = new mongoose.Schema({
-    name: {type:String, required:true},
-    price: {type: Number, required: true},
-    description: String,
+    title: {type:String, required:true},
+    description: { type: String, default: null },
+    price: {
+        amount: { type: Number, required: true },
+        currency: { type: String, default: 'TRY' },
+    },
+    images: [ { type: String, required: true } ],
     createdAt: {
         type: Date,
-        default: Date.now,
-    }
+        default: Date.now(),
+    },
+    status: { type: Number, enum: [0, 1, 2], default: 0 },
+    
 });
 
 module.exports = mongoose.model("Product", ProductShcema);

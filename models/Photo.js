@@ -24,7 +24,7 @@ const PhotoSchema = mongoose.Schema({
     path: { type: String, required: true },
     type: {
         type: String,
-        enum: ['advert', 'profile', 'other'],
+        enum: ['advert', 'profile', 'product', 'other'],
         default: 'other',
     },
     user: { type: mongoose.Types.ObjectId, ref: 'User' },

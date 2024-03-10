@@ -15,12 +15,16 @@
  *   along with nodejs_api_template.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 const express = require('express');
 const mongoose = require('mongoose');
 require("dotenv/config");
 const Product = require("../../models/Product");
-
+const fs = require('fs');
+const Utils = require('../helpers/utils')
 const router = express.Router();
+
+const dir = './upload/products';
 
 const connect_to_db = async () => {
     //console.log(process.env.USER_NAME);
@@ -41,16 +45,93 @@ router.get('/', async (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
+
     //console.log(req.body, "body");
     const product = new Product({
-        name: req.body.name,
+        title: req.body.title,
         price: req.body.price,
         description: req.body.description,
+        images: req.body.images,
     });
-    product.save(); //db save
-    //res.status(200).json({message: 'Products create ekranında POST requesti çalıştı.'});
+    product.save(); 
     res.json(product);
 });
+
+router.put('/images', (req, res, next) => {
+    const input = req.body.images;
+
+    // Girdi eger yoksa ya da liste degilse 403 dondur
+    if (!input || !Array.isArray(input)) {
+        return res.status(403).json({ 'error': 'Forbidden' })
+    }
+
+    try {
+        // Klasor yoksa olustur
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir, { recursive: true });
+        }
+
+        // Dosyanin olup olmama durumuna gore dosya adi belirle (dosya uzunlugu 64 karakter)
+        function safeMakeID() {
+            let filename = null
+
+            do {
+                const id = Utils.makeID(64)
+                filename = `${dir}/${id}`
+            } while (!fs.existsSync(filename))
+
+            return filename;
+        }
+
+        // Gelen dosyalari kaydet
+        var images = []
+        for (let i = 0; i < input.length; i++) {
+            // Dosya konumunu getir
+            const filename = safeMakeID()
+
+            // Base64 -> veri cevrimi
+            const item = input[i].bytes
+            const buff = new Buffer(item, 'base64')
+            const text = buff.toString('binary')
+
+            // Dosyaya kaydet
+            fs.writeFileSync(filename, text)
+
+            // Resmin dosya yolunu parcalara ayir ve dosya adini listeye kaydet
+            const routeWays = filename.split('/')
+            images.push(routeWays[routeWays.length - 1])
+        }
+
+        return res.status(200).json({ images })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({ 'error': e.toString() })
+    }
+});
+
+
+router.get('/images/:imagesId', (req, res, next) => {
+    try {
+        const id = req.params.imagesId
+        const filename = `${dir}/${id}`
+
+        if (fs.existsSync(filename)) {
+            const data = fs.readFileSync(filename)
+            res.writeHead(200, {
+                'Content-Type': 'image/jpeg',
+                'Content-disposition': `attachment;filename=${id}.jpg`,
+                'Content-Length': data.length,
+            })
+            return res.end(Buffer.from(data, 'binary'))
+        }
+
+        return res.status(404).json({ 'error': 'Image not found' })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({ 'error': e.toString() })
+    }
+});
+
 
 
 router.get('/:productId', async (req, res, next) => {
