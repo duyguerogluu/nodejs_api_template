@@ -83,7 +83,7 @@ router.put('/:advertId', async (req, res, next) => {
 
 router.delete('/:advertId', async (req, res, next) => {
     try{
-        const deleteAdvert = await User.findByIdAndDelete(req.params.advertId);
+        const deleteAdvert = await Advert.removeAdvertById(req.params.advertId);
        res.json(deleteAdvert);
     }catch(e){
         res.json(e);
