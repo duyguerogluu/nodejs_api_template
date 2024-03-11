@@ -18,7 +18,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 require("dotenv/config");
-const User = require('../../models/Advert');
+const Advert = require('../../models/Advert');
 const router = express.Router();
 
 const connect_to_db = async () => {
@@ -38,7 +38,7 @@ router.get('/advert', async (req, res, next)=>{
 })
 
 
-router.post('/advert', (req, res, next) => {
+router.post('/advert', async (req, res, next) => {
     //console.log(req.body, "body");
     const advert = new Advert({
         title: req.body.title,
@@ -49,7 +49,7 @@ router.post('/advert', (req, res, next) => {
         advert_type: req.body.advert_type,
         rooms: req.body.rooms,
     });
-    advert.save();
+    await advert.save();
     res.json(advert);
 });
 
@@ -63,10 +63,10 @@ router.get('/:advertId', async (req, res, next) => {
     }
 });
 
-router.put('/:advertId', (req, res, next) => {
+router.put('/:advertId', async (req, res, next) => {
 
     try{
-        const updateAdvert = Advert.findByIdAndUpdate(req.params.advertId, {
+        const updateAdvert = await Advert.findByIdAndUpdate(req.params.advertId, {
             title: req.body.title,
             description: req.body.description,
             author: req.body.author,
@@ -81,9 +81,9 @@ router.put('/:advertId', (req, res, next) => {
     }
 });
 
-router.delete('/:advertId', (req, res, next) => {
+router.delete('/:advertId', async (req, res, next) => {
     try{
-       const deleteAdvert = User.findByIdAndDelete(req.params.advertId);
+        const deleteAdvert = await User.findByIdAndDelete(req.params.advertId);
        res.json(deleteAdvert);
     }catch(e){
         res.json(e);

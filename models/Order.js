@@ -38,17 +38,14 @@ const OrderSchema = mongoose.Schema({
      * 4 - sipariş iadeye gönderildi
      * 5 - sipariş iadeye kabul edildi
      * 6 - iadeden sipariş geri gönderildi
+     * 7 - iade teslim edildi
      */
-    status: { type: Number, enum: [0, 1, 2, 3, 4, 5, 6], default: 0 },
+    status: { type: Number, enum: [0, 1, 2, 3, 4, 5, 6, 7], default: 0 },
     status_changer: {
         author: { type: mongoose.Types.ObjectId, ref: 'User' },
         reason: { type: String, default: null },
         changed: { type: Date, required: true },
     },
-    order_id: { type: Number, required: true },
-    order_type: { type: String, required: true },
-
-   
 }, { collection: 'Order', usePushEach: true });
 
 OrderSchema.statics = {

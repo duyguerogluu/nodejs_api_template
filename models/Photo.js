@@ -15,8 +15,6 @@
  *   along with nodejs_api_template.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import mongoose from 'mongoose';
-
 const mongoose = require('mongoose');
 
 

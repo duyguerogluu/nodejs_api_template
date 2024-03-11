@@ -31,6 +31,6 @@ const ProductShcema = new mongoose.Schema({
     },
     status: { type: Number, enum: [0, 1, 2], default: 0 },
     
-});
+}, { collection: 'Product', usePushEach: true });
 
 module.exports = mongoose.model("Product", ProductShcema);
