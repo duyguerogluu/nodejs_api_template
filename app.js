@@ -20,6 +20,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 
+require("dotenv/config");
+
 const productsRoutes = require('./api/routes/products');
 const ordersRoutes = require('./api/routes/order');
 const userRoutes = require('./api/routes/users');
@@ -32,6 +34,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(cors());
+
+const { connectToDB } = require('./api/helpers/utils');
+app.use(connectToDB);
 
 const { authenticateToken } = require('./middlewares/authmiddleware');
 app.use(authenticateToken);

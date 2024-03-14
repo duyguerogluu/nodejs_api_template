@@ -73,7 +73,7 @@ UserSchema.statics = {
 }
 UserSchema.pre("save", function (next) {
     const user = this;
-    user.password = bcrypt.hashSync(user.password, 10);
+    user.password = bcrypt.hashSync(user.password, process.env.JWT_SALT);
     console.log(user.password);
     next();
 });

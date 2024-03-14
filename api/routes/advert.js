@@ -17,16 +17,8 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-require("dotenv/config");
 const Advert = require('../../models/Advert');
 const router = express.Router();
-
-const connect_to_db = async () => {
-    //console.log(process.env.USER_NAME);
-    err = await mongoose.connect(`mongodb+srv://${process.env.USER_NAME}:${process.env.PASSWORD}@cluster0.xwgcemn.mongodb.net/${process.env.DATABASE_NAME1}?retryWrites=true&w=majority`);
-}
-
-connect_to_db()
 
 router.get('/advert', async (req, res) => {
     try{
