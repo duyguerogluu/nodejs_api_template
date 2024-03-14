@@ -18,35 +18,42 @@
 
 const jwt = require('jsonwebtoken');
 
-const authenticateToken = async (req, res, next) => {
-    const noAuthRoutes = [
-        '/login',
-    ];
+const Middleware = (() => {
+    const authenticateToken = async (req, res, next) => {
+        const noAuthRoutes = [
+            '/login',
+            '/signup',
+        ];
 
-    if (noAuthRoutes.findIndex(v => v == req.path) >= 0) {
-        return next();
-    }
-
-    try {
-        const token = req.cookies.jwt;
-
-        if (token) {
-            jwt.verify(token, process.env.JWT_SECRET, (err) => {
-                if (err) {
-                    console.error(err.messaage);
-                    return res.status(403).json({ 'error': 'Invalid auth token' })
-                } else {
-                    return next();
-                }
-            })
-        } else {
-            return res.status(403).json({ 'error': 'No token specified' })
+        if (noAuthRoutes.findIndex(v => v == req.path) >= 0) {
+            return next();
         }
-    } catch (error) {
-        return res.status(500).json({
-            error: 'Server error',
-        })
-    }
-}
 
-export {authenticateToken};
+        try {
+            const token = req.cookies.jwt;
+
+            if (token) {
+                jwt.verify(token, process.env.JWT_SECRET, (err) => {
+                    if (err) {
+                        console.error(err.messaage);
+                        return res.status(403).json({ 'error': 'Invalid auth token' })
+                    } else {
+                        return next();
+                    }
+                })
+            } else {
+                return res.status(403).json({ 'error': 'No token specified' })
+            }
+        } catch (error) {
+            return res.status(500).json({
+                error: 'Server error',
+            })
+        }
+    }
+
+    return {
+        authenticateToken,
+    }
+})();
+
+module.exports = Middleware;
