@@ -28,7 +28,7 @@ const connect_to_db = async () => {
 
 connect_to_db()
 
-router.get('/advert', async (req, res, next)=>{
+router.get('/advert', async (req, res) => {
     try{
         const advertList = await Advert.find().limit(30);
         res.json(advertList);
@@ -38,7 +38,7 @@ router.get('/advert', async (req, res, next)=>{
 })
 
 
-router.post('/advert', async (req, res, next) => {
+router.post('/advert', async (req, res) => {
     //console.log(req.body, "body");
     const advert = new Advert({
         title: req.body.title,
@@ -53,7 +53,7 @@ router.post('/advert', async (req, res, next) => {
     res.json(advert);
 });
 
-router.get('/:advertId', async (req, res, next) => {
+router.get('/:advertId', async (req, res) => {
     try {
         const id = req.params.advertId;
         const advert = await Advert.findById(id);
@@ -63,7 +63,7 @@ router.get('/:advertId', async (req, res, next) => {
     }
 });
 
-router.put('/:advertId', async (req, res, next) => {
+router.put('/:advertId', async (req, res) => {
 
     try{
         const updateAdvert = await Advert.findByIdAndUpdate(req.params.advertId, {
@@ -81,7 +81,7 @@ router.put('/:advertId', async (req, res, next) => {
     }
 });
 
-router.delete('/:advertId', async (req, res, next) => {
+router.delete('/:advertId', async (req, res) => {
     try{
         const deleteAdvert = await Advert.removeAdvertById(req.params.advertId);
        res.json(deleteAdvert);

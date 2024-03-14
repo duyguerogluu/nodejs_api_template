@@ -30,7 +30,7 @@ const connect_to_db = async () => {
 
 connect_to_db()
 
-router.get('/', async (req, res, next) => {
+router.get('/', async (req, res) => {
     try {
         const orderList = await Order.find().limit(10);
         res.json(orderList);
@@ -40,7 +40,7 @@ router.get('/', async (req, res, next) => {
 });
 
 
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
     //console.log(req.body, "body");
     const product = new Order({
         title: req.body.title,

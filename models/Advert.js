@@ -18,6 +18,7 @@
 
 const mongoose = require('mongoose');
 const User = require('./User');
+const Photo = require('./Photo');
 
 const AdvertSchema = mongoose.Schema({
     title: { type: String, required: true },

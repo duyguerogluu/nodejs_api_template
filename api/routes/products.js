@@ -22,6 +22,7 @@ require("dotenv/config");
 const Product = require("../../models/Product");
 const fs = require('fs');
 const Utils = require('../helpers/utils')
+
 const router = express.Router();
 
 const dir = './upload/products';
@@ -35,7 +36,7 @@ const connect_to_db = async () => {
 connect_to_db()
 
 
-router.get('/', async (req, res, next) => {
+router.get('/', async (req, res) => {
     try {
         const productList = await Product.find().limit(10);
         res.json(productList);
@@ -44,7 +45,7 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
 
     //console.log(req.body, "body");
     const product = new Product({
@@ -57,7 +58,7 @@ router.post('/', (req, res, next) => {
     res.json(product);
 });
 
-router.put('/images', (req, res, next) => {
+router.put('/images', (req, res) => {
     const input = req.body.images;
 
     // Girdi eger yoksa ya da liste degilse 403 dondur
@@ -110,7 +111,7 @@ router.put('/images', (req, res, next) => {
 });
 
 
-router.get('/images/:imagesId', (req, res, next) => {
+router.get('/images/:imagesId', (req, res) => {
     try {
         const id = req.params.imagesId
         const filename = `${dir}/${id}`
@@ -134,7 +135,7 @@ router.get('/images/:imagesId', (req, res, next) => {
 
 
 
-router.get('/:productId', async (req, res, next) => {
+router.get('/:productId', async (req, res) => {
     try {
         const id = req.params.productId;
         const product = await Product.findById(id);
@@ -145,7 +146,7 @@ router.get('/:productId', async (req, res, next) => {
 });
 
 
-router.put('/:productId', (req, res, next) => {
+router.put('/:productId', (req, res) => {
 
     try{
         const updateProduct = Product.findByIdAndUpdate(req.params.productId, {
@@ -160,7 +161,7 @@ router.put('/:productId', (req, res, next) => {
 });
 
 
-router.delete('/:productId', (req, res, next) => {
+router.delete('/:productId', (req, res) => {
     try{
        const deleteProduct = Product.findByIdAndDelete(req.params.productId);
        res.json(deleteProduct);

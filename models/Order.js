@@ -18,6 +18,7 @@
 
 const mongoose = require('mongoose');
 const User = require('./User');
+const Product = require('./Product');
 
 const OrderSchema = mongoose.Schema({
     author: { type: mongoose.Types.ObjectId, ref: 'User' },

@@ -33,6 +33,9 @@ app.use(cookieParser());
 
 app.use(cors());
 
+const { authenticateToken } = require('./middlewares/authmiddleware');
+app.use(authenticateToken);
+
 app.use('/', authRoutes);
 app.use('/products', productsRoutes);
 app.use('/orders', ordersRoutes);

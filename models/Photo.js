@@ -16,6 +16,7 @@
  */
 
 const mongoose = require('mongoose');
+const User = require('./User');
 
 
 const PhotoSchema = mongoose.Schema({

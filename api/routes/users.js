@@ -20,7 +20,6 @@ const mongoose = require('mongoose');
 require("dotenv/config");
 const User = require('../../models/User');
 const router = express.Router();
-//const autmiddleware = require('../middlewares/autmiddleware');
 
 
 const connect_to_db = async () => {
@@ -45,7 +44,7 @@ router.post('/logout', AuthUtils.checkJWT, (req, res, next) => {
 });
 */
 
-router.get('/', async (req, res, next)=>{
+router.get('/', async (req, res) => {
     try{
         const userList = await User.find().limit(10);
         res.json(userList);
@@ -55,7 +54,7 @@ router.get('/', async (req, res, next)=>{
 });
 
 /*
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
     //console.log(req.body, "body");
     const user = new User({
         username: req.body.username,
@@ -66,7 +65,7 @@ router.post('/', (req, res, next) => {
     res.json(user);
 });
 
-router.get('/:userId', async (req, res, next) => {
+router.get('/:userId', async (req, res) => {
     try {
         const id = req.params.userId;
         const user = await User.findById(id);
@@ -76,7 +75,7 @@ router.get('/:userId', async (req, res, next) => {
     }
 });
 
-router.put('/:userId', (req, res, next) => {
+router.put('/:userId', (req, res) => {
 
     try{
         const updateUser = User.findByIdAndUpdate(req.params.userId, {
@@ -90,7 +89,7 @@ router.put('/:userId', (req, res, next) => {
 });
 
 
-router.delete('/:userId', (req, res, next) => {
+router.delete('/:userId', (req, res) => {
     try{
        const deleteUser = User.findByIdAndDelete(req.params.userId);
        res.json(deleteUser);
