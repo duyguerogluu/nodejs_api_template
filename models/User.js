@@ -50,7 +50,7 @@ const UserSchema = mongoose.Schema({
     orders: [ { type: mongoose.Types.ObjectId, ref: 'Order' } ],
     phone: { type: PhoneSchema },
     email: { type: EMailSchema },
-    location: {
+    location: [{
         region: { type: String, required: true },
         city: { type: String, required: true },
         country: { type: String, default: 'TR' },
@@ -58,7 +58,7 @@ const UserSchema = mongoose.Schema({
             lat: { type: Number, required: true },
             lon: { type: Number, required: true },
         },
-    },
+    }],
 }, { collection: 'User', usePushEach: true });
 
 UserSchema.statics = {
