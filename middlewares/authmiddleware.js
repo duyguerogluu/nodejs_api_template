@@ -17,6 +17,7 @@
 
 
 const jwt = require('jsonwebtoken');
+const Token = require('../models/Token');
 
 const Middleware = (() => {
     const authenticateToken = async (req, res, next) => {
@@ -38,6 +39,8 @@ const Middleware = (() => {
                         console.error(err.toString());
                         return res.status(403).json({ 'error': 'Invalid auth token' })
                     } else {
+                        const userToken = Token.getUserByToken(token);
+                        req.user = userToken;
                         return next();
                     }
                 })
