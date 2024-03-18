@@ -82,7 +82,7 @@ router.put('/images', (req, res) => {
 
             // Base64 -> veri cevrimi
             const item = input[i].bytes
-            const buff = new Buffer(item, 'base64')
+            const buff = Buffer.from(item, 'base64')
             const text = buff.toString('binary')
 
             // Dosyaya kaydet

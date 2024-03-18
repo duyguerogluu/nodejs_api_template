@@ -35,7 +35,7 @@ const Middleware = (() => {
             if (token) {
                 jwt.verify(token, process.env.JWT_SECRET, (err) => {
                     if (err) {
-                        console.error(err.messaage);
+                        console.error(err.toString());
                         return res.status(403).json({ 'error': 'Invalid auth token' })
                     } else {
                         return next();
