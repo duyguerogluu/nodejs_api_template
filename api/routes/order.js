@@ -43,6 +43,18 @@ router.post('/', (req, res) => {
     res.json(product);
 });
 
+router.proppatch('/:orderId', (req, res) => {
+    try {
+        const cancelOrder = Order.cancelOrder(
+            req.params.orderId,
+            req.user.id,
+        );
+        res.json(cancelOrder);
+    } catch (e) {
+        res.json(e);
+    }
+});
+
 router.delete('/:orderId', (req, res) => {
     try {
         const deleteOrder = Order.findByIdAndDelete(req.params.orderId);

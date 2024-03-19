@@ -54,6 +54,17 @@ OrderSchema.statics = {
         return this.deleteOne({ _id: id });
     },
 
+    async cancelOrder(id, changerId) {
+        return this.findByIdAndUpdate(id, {
+            status: 4,
+            status_changer: {
+                author: changerId,
+                reason: 'Iptal',
+                changed: Date.now(),
+            },
+        });
+    },
+
     async findOrdersByUid(uid) {
         return this.find({ author: uid })
             .populate([

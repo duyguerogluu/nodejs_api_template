@@ -38,8 +38,7 @@ const authenticateToken = async (req, res, next) => {
                     console.error(err.toString());
                     return res.status(403).json({ 'error': 'Invalid auth token' })
                 } else {
-                    const userToken = Token.getUserByToken(token);
-                    req.user = userToken;
+                    req.user = Token.getUserByToken(token);
                     return next();
                 }
             })
