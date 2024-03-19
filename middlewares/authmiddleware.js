@@ -19,44 +19,40 @@
 const jwt = require('jsonwebtoken');
 const Token = require('../models/Token');
 
-const Middleware = (() => {
-    const authenticateToken = async (req, res, next) => {
-        const noAuthRoutes = [
-            '/login',
-            '/signup',
-        ];
+const authenticateToken = async (req, res, next) => {
+    const noAuthRoutes = [
+        '/login',
+        '/signup',
+    ];
 
-        if (noAuthRoutes.findIndex(v => v == req.path) >= 0) {
-            return next();
-        }
+    if (noAuthRoutes.findIndex(v => v == req.path) >= 0) {
+        return next();
+    }
 
-        try {
-            const token = req.cookies.jwt;
+    try {
+        const token = req.cookies.jwt;
 
-            if (token) {
-                jwt.verify(token, process.env.JWT_SECRET, (err) => {
-                    if (err) {
-                        console.error(err.toString());
-                        return res.status(403).json({ 'error': 'Invalid auth token' })
-                    } else {
-                        const userToken = Token.getUserByToken(token);
-                        req.user = userToken;
-                        return next();
-                    }
-                })
-            } else {
-                return res.status(403).json({ 'error': 'No token specified' })
-            }
-        } catch (error) {
-            return res.status(500).json({
-                error: 'Server error',
+        if (token) {
+            jwt.verify(token, process.env.JWT_SECRET, (err) => {
+                if (err) {
+                    console.error(err.toString());
+                    return res.status(403).json({ 'error': 'Invalid auth token' })
+                } else {
+                    const userToken = Token.getUserByToken(token);
+                    req.user = userToken;
+                    return next();
+                }
             })
+        } else {
+            return res.status(403).json({ 'error': 'No token specified' })
         }
+    } catch (error) {
+        return res.status(500).json({
+            error: 'Server error',
+        })
     }
+}
 
-    return {
-        authenticateToken,
-    }
-})();
-
-module.exports = Middleware;
+module.exports = {
+    authenticateToken,
+};

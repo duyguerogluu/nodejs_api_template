@@ -43,6 +43,14 @@ router.post('/', (req, res) => {
     res.json(product);
 });
 
+router.delete('/:orderId', (req, res) => {
+    try {
+        const deleteOrder = Order.findByIdAndDelete(req.params.orderId);
+        res.json(deleteOrder);
+    } catch (e) {
+        res.json(e);
+    }
+});
 
 
 module.exports = router;
