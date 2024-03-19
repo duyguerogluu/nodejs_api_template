@@ -19,7 +19,7 @@ const mongoose = require('mongoose');
 const User = require('./User');
 
 
-const PhotoSchema = mongoose.Schema({
+const PhotoSchema = new mongoose.Schema({
     path: { type: String, required: true },
     type: {
         type: String,
@@ -30,4 +30,6 @@ const PhotoSchema = mongoose.Schema({
     created: { type: Date, default: Date.now() },
 }, { collection: 'Photo', usePushEach: true });
 
+
+/** @class Photo */
 module.exports = mongoose.model("Photo", PhotoSchema);

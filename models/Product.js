@@ -33,4 +33,5 @@ const ProductShcema = new mongoose.Schema({
     
 }, { collection: 'Product', usePushEach: true });
 
+/** @class Product */
 module.exports = mongoose.model("Product", ProductShcema);

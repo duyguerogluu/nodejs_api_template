@@ -20,7 +20,7 @@ const mongoose = require('mongoose');
 const User = require('./User');
 const Photo = require('./Photo');
 
-const AdvertSchema = mongoose.Schema({
+const AdvertSchema = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String, default: null },
     author: { type: mongoose.Types.ObjectId, ref: 'User' },
@@ -71,10 +71,12 @@ const AdvertSchema = mongoose.Schema({
 }, { collection: 'Advert', usePushEach: true });
 
 AdvertSchema.statics = {
+    /** @memberOf Advert */
     async removeAdvertById(id) {
         return this.deleteOne({ _id: id });
     },
 
+    /** @memberOf Advert */
     async findAdvertsByUid(uid) {
         return this.find({ author: uid })
             .populate([
@@ -96,4 +98,5 @@ AdvertSchema.statics = {
     },
 };
 
+/** @class Advert */
 module.exports = mongoose.model('Advert', AdvertSchema);

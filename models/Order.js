@@ -20,7 +20,7 @@ const mongoose = require('mongoose');
 const User = require('./User');
 const Product = require('./Product');
 
-const OrderSchema = mongoose.Schema({
+const OrderSchema = new mongoose.Schema({
     author: { type: mongoose.Types.ObjectId, ref: 'User' },
     product: [ { type: mongoose.Types.ObjectId, ref: 'Product' } ],
     price: {
@@ -50,10 +50,12 @@ const OrderSchema = mongoose.Schema({
 }, { collection: 'Order', usePushEach: true });
 
 OrderSchema.statics = {
+    /** @memberOf Order */
     async removeOrderById(id) {
         return this.deleteOne({ _id: id });
     },
 
+    /** @memberOf Order */
     async cancelOrder(id, changerId) {
         return this.findByIdAndUpdate(id, {
             status: 4,
@@ -65,6 +67,7 @@ OrderSchema.statics = {
         });
     },
 
+    /** @memberOf Order */
     async findOrdersByUid(uid) {
         return this.find({ author: uid })
             .populate([
@@ -86,4 +89,5 @@ OrderSchema.statics = {
     },
 };
 
+/** @class Order */
 module.exports = mongoose.model('Order', OrderSchema);

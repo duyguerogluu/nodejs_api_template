@@ -18,7 +18,7 @@ const bcrypt = require('bcrypt');
 
 const mongoose = require('mongoose');
 
-const PhoneSchema = mongoose.Schema({
+const PhoneSchema = new mongoose.Schema({
     phone: { type: String, required: true },
     verified: { type: Date, default: Date.now() },
 }, {
@@ -28,7 +28,7 @@ const PhoneSchema = mongoose.Schema({
     id: false,
 });
 
-const EMailSchema = mongoose.Schema({
+const EMailSchema = new mongoose.Schema({
     email: { type: String, required: true },
     verified: { type: Date, default: Date.now() },
 }, {
@@ -39,7 +39,7 @@ const EMailSchema = mongoose.Schema({
 });
 
 
-const UserSchema = mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     first_name: { type: String, required: true },
     last_name: { type: String, default: '' },
@@ -62,6 +62,7 @@ const UserSchema = mongoose.Schema({
 }, { collection: 'User', usePushEach: true });
 
 UserSchema.statics = {
+    /** @memberOf User */
     async getUserById(id) {
         return this.findOne({ _id: id })
             .populate([
@@ -71,6 +72,7 @@ UserSchema.statics = {
             ]);
     },
 }
+
 UserSchema.pre("save", function (next) {
     const user = this;
     user.password = bcrypt.hashSync(user.password, process.env.JWT_SALT);
@@ -78,5 +80,5 @@ UserSchema.pre("save", function (next) {
     next();
 });
 
-
+/** @class User */
 module.exports = mongoose.model("User", UserSchema);

@@ -19,13 +19,14 @@
 const mongoose = require('mongoose');
 const User = require('./User');
 
-const TokenSchema = mongoose.Schema({
+const TokenSchema = new mongoose.Schema({
     username: { type: String, required: true },
     token: { type: String, required: true },
     valid_time: { type: Date, required: true },
 }, { collection: 'Token', usePushEach: true });
 
 TokenSchema.statics = {
+    /** @memberOf Token */
     async getUserByToken(token) {
         const tokenObj = this.findOne({ token })
         if (tokenObj) {
@@ -35,6 +36,7 @@ TokenSchema.statics = {
         return undefined
     },
 
+    /** @memberOf Token */
     async isTokenValid(username, input) {
         const token = this.findOne({ username: username, token: input });
         if (!token) {
@@ -45,4 +47,5 @@ TokenSchema.statics = {
     }
 }
 
+/** @class Token */
 module.exports = mongoose.model("Token", TokenSchema);
